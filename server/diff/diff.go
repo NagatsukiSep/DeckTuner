@@ -3,20 +3,18 @@ package diff
 import (
 	"server/read"
 	"server/typefile"
-
-	"github.com/labstack/echo/v4"
 )
 
-func Diff(c echo.Context) error {
+func Diff(ndeckID string, odeckID string) (typefile.Diff, error) {
 
-	ndeck, err := read.Read(c.FormValue("ndeckID"))
+	ndeck, err := read.Read(ndeckID)
 	if err != nil {
-		return err
+		return typefile.Diff{}, err
 	}
 
-	odeck, err := read.Read(c.FormValue("odeckID"))
+	odeck, err := read.Read(odeckID)
 	if err != nil {
-		return err
+		return typefile.Diff{}, err
 	}
 
 	diff := typefile.Diff{}
@@ -65,6 +63,6 @@ func Diff(c echo.Context) error {
 		}
 	}
 
-	return c.JSON(200, diff)
+	return diff, nil
 
 }
