@@ -8,37 +8,35 @@ import (
 	"strconv"
 
 	"server/typefile"
-
-	"github.com/labstack/echo/v4"
 )
 
-func Read(c echo.Context) error {
-	url := "https://www.pokemon-card.com/deck/confirm.html/deckID/" + c.FormValue("deckID")
+func Read(code string) (typefile.Deck, error) {
+	url := "https://www.pokemon-card.com/deck/confirm.html/deckID/" + code
 
 	class := []string{"pke", "gds", "sup", "sta", "ene"}
 
 	deck := typefile.Deck{}
 
-	deck.DeckID = c.FormValue("deckID")
+	deck.DeckID = code
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return deck, err
 	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return deck, err
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return deck, err
 	}
 
 	for _, c := range class {
@@ -46,7 +44,7 @@ func Read(c echo.Context) error {
 		re, err := regexp.Compile(cpattern)
 		if err != nil {
 			fmt.Println(err)
-			return err
+			return deck, err
 		}
 		matches := re.FindAllStringSubmatch(string(body), -1)
 		match := matches[0][1]
@@ -56,7 +54,7 @@ func Read(c echo.Context) error {
 		re, err = regexp.Compile(pattern)
 		if err != nil {
 			fmt.Println(err)
-			return err
+			return deck, err
 		}
 		matches = re.FindAllStringSubmatch(match, -1)
 
@@ -64,7 +62,7 @@ func Read(c echo.Context) error {
 			amount, err := strconv.Atoi(match[2])
 			if err != nil {
 				fmt.Println(err)
-				return err
+				return deck, err
 			}
 			deck.CardList = append(deck.CardList, typefile.Card{CardID: match[1], Amount: amount, Class: c})
 		}
@@ -77,7 +75,7 @@ PCGDECK\.searchItemCardPict\[(\d{5})\]='(.*?)';`
 	re, err := regexp.Compile(dpattern)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return deck, err
 	}
 	matches := re.FindAllStringSubmatch(string(body), -1)
 
@@ -95,5 +93,5 @@ PCGDECK\.searchItemCardPict\[(\d{5})\]='(.*?)';`
 		}
 	}
 
-	return c.JSON(http.StatusOK, deck)
+	return deck, nil
 }

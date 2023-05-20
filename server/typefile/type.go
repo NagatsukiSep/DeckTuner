@@ -14,3 +14,8 @@ type Deck struct {
 	DeckName string `json:"deck_name"`
 	CardList []Card `json:"card_list"`
 }
+
+type Diff struct {
+	Plus  []Card `json:"plus"`
+	Minus []Card `json:"minus"`
+}
