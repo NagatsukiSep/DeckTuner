@@ -28,13 +28,13 @@ export const Diff = (prop: Props) => {
     <div className="flex flex-col w-full p-2 items-end">
       <BasicBox className="flex flex-row w-full my-2 p-2">
         <div className="flex flex-col w-1/2">
-          {prop.add.map((card) => (
-            <div className="text-[#439725]">
+          {prop.add.map((card, id) => (
+            <div key={id} className="text-[#439725]">
               + {card.name} x {card.amount}
             </div>
           ))}
-          {prop.sub.map((card) => (
-            <div className="text-[#8B0000]">
+          {prop.sub.map((card, id) => (
+            <div key={id} className="text-[#8B0000]">
               - {card.name} x {card.amount}
             </div>
           ))}
@@ -42,12 +42,13 @@ export const Diff = (prop: Props) => {
         <div className="flex flex-col w-1/2">
           <div className="flex flex-row w-full m-1">
             <div className="flex flex-row flex-grow justify-start">
-              {prop.add.map((card) => (
+              {prop.add.map((card, id) => (
                 <Card
                   className="w-2/5"
                   image={card.image}
                   amount={card.amount}
                   isHalf={true}
+                  key={id}
                 />
               ))}
             </div>
@@ -56,12 +57,13 @@ export const Diff = (prop: Props) => {
           <div className="flex flex-row w-full m-1">
             <img src="/Arrow.svg" alt="arrow" className="w-1/5 mx-1" />
             <div className="flex flex-row flex-grow justify-end">
-              {prop.sub.map((card) => (
+              {prop.sub.map((card, id) => (
                 <Card
                   className="w-2/5 mx-1"
                   image={card.image}
                   amount={card.amount}
                   isHalf={true}
+                  key={id}
                 />
               ))}
             </div>
@@ -71,11 +73,12 @@ export const Diff = (prop: Props) => {
           </div>
         </div>
       </BasicBox>
-      {prop.comment.map((comment) => (
+      {prop.comment.map((comment, id) => (
         <Comment
           className="w-4/5"
           content={comment.content}
           date={comment.date}
+          key={id}
         />
       ))}
       <CommentBox className="w-4/5 p-2 mb-1">
